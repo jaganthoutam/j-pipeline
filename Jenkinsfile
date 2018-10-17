@@ -12,7 +12,7 @@ node {
 
   stage('Integration') {
 	
-    withKubeConfig([credentialsId: 'jenkins-deployer-credentials', serverUrl: 'https://104.155.31.202']) {
+    withKubeConfig([credentialsId: 'jenkins-deployer-credentials', serverUrl: 'https://35.200.244.228']) {
       
       sh 'kubectl create cm nodejs-app --from-file=src/ --namespace=myapp-integration -o=yaml --dry-run > deploy/cm.yaml'
       sh 'kubectl apply -f deploy/ --namespace=myapp-integration'
@@ -56,7 +56,7 @@ node {
     }
   }
   stage('Production') {
-    withKubeConfig([credentialsId: 'jenkins-deployer-credentials', serverUrl: 'https://104.155.31.202']) {
+    withKubeConfig([credentialsId: 'jenkins-deployer-credentials', serverUrl: 'https://35.200.244.228']) {
       
     	sh 'kubectl create cm nodejs-app --from-file=src/ --namespace=myapp-production -o=yaml --dry-run > deploy/cm.yaml'
      	sh 'kubectl apply -f deploy/ --namespace=myapp-production'
