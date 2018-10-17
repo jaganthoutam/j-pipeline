@@ -25,3 +25,4 @@ if [ "$res3" != "The information about person with id 1 is X" ]; then
 fi
 
 echo "Integration tests succeeded."
+echo "SUCCEES"
