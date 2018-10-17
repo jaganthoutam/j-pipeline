@@ -14,8 +14,8 @@ node {
 	
     withKubeConfig([credentialsId: 'jenkins-deployer-credentials', serverUrl: 'https://35.200.244.228']) {
       
-      sh 'kubectl create cm nodejs-app --from-file=src/ --namespace=myapp-integration -o=yaml --dry-run > deploy/cm.yaml'
-      sh 'kubectl apply -f deploy/ --namespace=myapp-integration'
+      sh 'kubectl create cm nodejs-app --from-file=src/ --namespace=default -o=yaml --dry-run > deploy/cm.yaml'
+      sh 'kubectl apply -f deploy/ --namespace=default'
       try{
       	//Gathering Node.js app's external IP address
       	def ip = ''
@@ -26,7 +26,7 @@ node {
       	println("Waiting for IP address")       	
       	while(ip=='' && count<countLimit) {
       		sleep 30
-      		ip = sh script: 'kubectl get svc --namespace=myapp-integration -o jsonpath="{.items[?(@.metadata.name==\'nginx-reverseproxy-service\')].status.loadBalancer.ingress[*].ip}"', returnStdout: true
+      		ip = sh script: 'kubectl get svc --namespace=default -o jsonpath="{.items[?(@.metadata.name==\'nginx-reverseproxy-service\')].status.loadBalancer.ingress[*].ip}"', returnStdout: true
       		ip=ip.trim()
       		count++                                                                              
       	}
@@ -41,7 +41,7 @@ node {
 		
 		//Cleaning the integration environment
 		println("Cleaning integration environment...")
-		sh 'kubectl delete -f deploy --namespace=myapp-integration'
+		sh 'kubectl delete -f deploy --namespace=default'
         println("Integration stage finished.")   
 		}                      
      
@@ -49,7 +49,7 @@ node {
       catch(Exception e) {
       	println("Integration stage failed.")
 	  	println("Cleaning integration environment...")
-	  	sh 'kubectl delete -f deploy --namespace=myapp-integration'
+	  	sh 'kubectl delete -f deploy --namespace=default'
       	error("Exiting...")                                     
       }
 
