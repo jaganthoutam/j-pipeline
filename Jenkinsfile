@@ -58,8 +58,8 @@ node {
   stage('Production') {
     withKubeConfig([credentialsId: 'jenkins-deployer-credentials', serverUrl: 'https://35.200.244.228']) {
       
-    	sh 'kubectl create cm nodejs-app --from-file=src/ --namespace=myapp-production -o=yaml --dry-run > deploy/cm.yaml'
-     	sh 'kubectl apply -f deploy/ --namespace=myapp-production'
+    	sh 'kubectl create cm nodejs-app --from-file=src/ --namespace=default -o=yaml --dry-run > deploy/cm.yaml'
+     	sh 'kubectl apply -f deploy/ --namespace=default'
       
   
 	   	//Gathering Node.js app's external IP address
@@ -71,7 +71,7 @@ node {
       	println("Waiting for IP address")       	
       	while(ip=='' && count<countLimit) {
       		sleep 30
-      		ip = sh script: 'kubectl get svc --namespace=myapp-production -o jsonpath="{.items[?(@.metadata.name==\'nginx-reverseproxy-service\')].status.loadBalancer.ingress[*].ip}"', returnStdout: true
+      		ip = sh script: 'kubectl get svc --namespace=default -o jsonpath="{.items[?(@.metadata.name==\'nginx-reverseproxy-service\')].status.loadBalancer.ingress[*].ip}"', returnStdout: true
       		ip = ip.trim()
       		count++                                                                              
       	}
